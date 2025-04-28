@@ -1,10 +1,12 @@
 from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from flask_bcrypt import Bcrypt
 import os
 import logging
 from app.utils.swagger import setup_swagger
 
 db = SQLAlchemy()
+bcrypt = Bcrypt()
 
 def create_app():
     app = Flask(__name__)
@@ -20,9 +22,15 @@ def create_app():
     )
     
     from app.routes.health import health_bp
+    from app.routes.auth import auth_bp
+    
     app.register_blueprint(health_bp)
+    app.register_blueprint(auth_bp)
     
     # Setup Swagger documentation
     setup_swagger(app)
+    
+    # Initialize extensions with app
+    bcrypt.init_app(app)
     
     return app

@@ -8,13 +8,11 @@ def test_swagger_json_endpoint(client):
     assert response.status_code == 200
     data = json.loads(response.data)
     
-    # Check basic Swagger structure
     assert 'openapi' in data
     assert 'info' in data
     assert 'title' in data['info']
     assert 'paths' in data
     
-    # Check that our health endpoint is documented
     assert '/health' in data['paths']
     assert 'get' in data['paths']['/health']
 
