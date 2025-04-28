@@ -1,7 +1,8 @@
-from flask import Flask
+from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
 import os
 import logging
+from app.utils.swagger import setup_swagger
 
 db = SQLAlchemy()
 
@@ -20,5 +21,8 @@ def create_app():
     
     from app.routes.health import health_bp
     app.register_blueprint(health_bp)
+    
+    # Setup Swagger documentation
+    setup_swagger(app)
     
     return app

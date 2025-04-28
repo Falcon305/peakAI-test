@@ -8,6 +8,54 @@ logger = logging.getLogger(__name__)
 
 @health_bp.route('/health', methods=['GET'])
 def health_check():
+    """Health Check Endpoint
+    ---
+    get:
+      summary: Health check endpoint
+      description: Verifies the application and database connection status
+      responses:
+        200:
+          description: Application is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: healthy
+                  components:
+                    type: object
+                    properties:
+                      api:
+                        type: string
+                        example: healthy
+                      database:
+                        type: string
+                        example: healthy
+        503:
+          description: Application is unhealthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: unhealthy
+                  components:
+                    type: object
+                    properties:
+                      api:
+                        type: string
+                        example: healthy
+                      database:
+                        type: string
+                        example: unhealthy
+                      database_error:
+                        type: string
+                        example: Error connecting to database
+    """
     try:
         db_status = "healthy"
         db_error = None
