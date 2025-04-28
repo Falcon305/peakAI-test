@@ -1,0 +1,384 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "Cognitive Assessment API",
+    "description": "A platform for analyzing journal entries using LIWC algorithm",
+    "version": "1.0.0"
+  },
+  "components": {
+    "securitySchemes": {
+      "Bearer": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": ["health"],
+        "summary": "Health check endpoint",
+        "description": "Check the health of the API and database connection",
+        "responses": {
+          "200": {
+            "description": "Health check successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "ok"
+                    },
+                    "database": {
+                      "type": "string",
+                      "example": "connected"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Health check failed"
+          }
+        }
+      }
+    },
+    "/users": {
+      "post": {
+        "tags": ["auth"],
+        "summary": "Register a new user",
+        "description": "Register a new user with username and password",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["username", "password"],
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "example": "testuser"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "password123"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User created successfully"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "409": {
+            "description": "Username already exists"
+          }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "tags": ["auth"],
+        "summary": "Authenticate user",
+        "description": "Authenticate user and get JWT token",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["username", "password"],
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "example": "testuser"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "password123"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "token": {
+                      "type": "string",
+                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid credentials"
+          }
+        }
+      }
+    },
+    "/journals": {
+      "post": {
+        "tags": ["journals"],
+        "summary": "Submit a new journal entry for LIWC analysis",
+        "description": "Submit journal text for analysis and get scores based on LIWC algorithm",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["text"],
+                "properties": {
+                  "text": {
+                    "type": "string",
+                    "example": "I am happy today, but I was sad yesterday."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Journal created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "journal_id": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "score": {
+                      "type": "object",
+                      "properties": {
+                        "categories": {
+                          "type": "object",
+                          "properties": {
+                            "positive_emotion": {
+                              "type": "integer",
+                              "example": 1
+                            },
+                            "negative_emotion": {
+                              "type": "integer",
+                              "example": 1
+                            },
+                            "social": {
+                              "type": "integer",
+                              "example": 0
+                            },
+                            "cognitive": {
+                              "type": "integer",
+                              "example": 0
+                            }
+                          }
+                        },
+                        "total": {
+                          "type": "integer",
+                          "example": 2
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      },
+      "get": {
+        "tags": ["journals"],
+        "summary": "List all journal entries for the current user",
+        "description": "Retrieve all journal entries submitted by the authenticated user",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Journals retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "journals": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "example": 1
+                          },
+                          "text": {
+                            "type": "string",
+                            "example": "I am happy today, but I was sad yesterday."
+                          },
+                          "user_id": {
+                            "type": "integer",
+                            "example": 1
+                          },
+                          "created_at": {
+                            "type": "string",
+                            "format": "date-time",
+                            "example": "2025-04-28T17:00:00Z"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/journals/{journal_id}/score": {
+      "get": {
+        "tags": ["journals"],
+        "summary": "Retrieve the LIWC analysis score for a journal entry",
+        "description": "Get the linguistic analysis scores for a previously submitted journal entry",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "journal_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Journal ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Journal score retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "journal_id": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "score": {
+                      "type": "object",
+                      "properties": {
+                        "categories": {
+                          "type": "object",
+                          "properties": {
+                            "positive_emotion": {
+                              "type": "integer",
+                              "example": 1
+                            },
+                            "negative_emotion": {
+                              "type": "integer",
+                              "example": 1
+                            },
+                            "social": {
+                              "type": "integer",
+                              "example": 0
+                            },
+                            "cognitive": {
+                              "type": "integer",
+                              "example": 0
+                            }
+                          }
+                        },
+                        "total": {
+                          "type": "integer",
+                          "example": 2
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Journal not found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - not your journal"
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "health",
+      "description": "Health check operations"
+    },
+    {
+      "name": "auth",
+      "description": "Authentication operations"
+    },
+    {
+      "name": "journals",
+      "description": "Journal and LIWC analysis operations"
+    }
+  ]
+}

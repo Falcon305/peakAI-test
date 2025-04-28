@@ -23,14 +23,14 @@ def create_app():
     
     from app.routes.health import health_bp
     from app.routes.auth import auth_bp
+    from app.routes.journal import journal_bp
     
     app.register_blueprint(health_bp)
     app.register_blueprint(auth_bp)
+    app.register_blueprint(journal_bp)
     
-    # Setup Swagger documentation
     setup_swagger(app)
     
-    # Initialize extensions with app
     bcrypt.init_app(app)
     
     return app

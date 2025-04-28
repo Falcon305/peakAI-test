@@ -40,6 +40,10 @@ env/
 
 # Docker
 .docker/
+docker-volumes/
+postgres_data/
+.docker-volumes/
+volumes/
 
 # Database
 *.sqlite

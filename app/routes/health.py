@@ -8,53 +8,17 @@ logger = logging.getLogger(__name__)
 
 @health_bp.route('/health', methods=['GET'])
 def health_check():
-    """Health Check Endpoint
-    ---
-    get:
-      summary: Health check endpoint
-      description: Verifies the application and database connection status
-      responses:
-        200:
-          description: Application is healthy
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: healthy
-                  components:
-                    type: object
-                    properties:
-                      api:
-                        type: string
-                        example: healthy
-                      database:
-                        type: string
-                        example: healthy
-        503:
-          description: Application is unhealthy
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: unhealthy
-                  components:
-                    type: object
-                    properties:
-                      api:
-                        type: string
-                        example: healthy
-                      database:
-                        type: string
-                        example: unhealthy
-                      database_error:
-                        type: string
-                        example: Error connecting to database
+    """
+    Health Check Endpoint
+    
+    Verifies the application and database connection status.
+    
+    Returns:
+    - status: Status of the application (healthy/unhealthy)
+    - components: 
+        - api: Status of the API (healthy)
+        - database: Database connection status (healthy/unhealthy)
+        - database_error: Error message if database connection fails
     """
     try:
         db_status = "healthy"

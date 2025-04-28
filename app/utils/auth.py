@@ -1,6 +1,7 @@
 from functools import wraps
 from flask import request, jsonify
 from app.models.user import User
+from app import db
 import jwt
 
 def token_required(f):
@@ -34,7 +35,7 @@ def token_required(f):
                     'message': user_id
                 }), 401
                 
-            current_user = User.query.get(user_id)
+            current_user = db.session.get(User, user_id)
             
             if not current_user:
                 return jsonify({
